@@ -87,10 +87,7 @@ function shiftGroup(NGP, preGroupList,  divide, Remain){
         console.log(personalGroupList);
 
         downloadTextFile(formatList(personalGroupList));
-        $('#sum').val('');
-        $('#divide').val('');
-        $('#count').val('');
-        // setTimeout(function (){location.reload();},800);
+        deleteCash();
     }
 }
 
@@ -179,7 +176,7 @@ function refreshForm(){
     }
 }
 
-$(function(){
+function deleteCash(){
     $('#sum').val('');
     $('#divide').val('');
     $('#count').val('');
@@ -189,4 +186,8 @@ $(function(){
         $('#divide').val(sessionStorage.getItem('divide'));
         $('#count').val(sessionStorage.getItem('count'));
     }
+}
+
+$(function(){
+    deleteCash();
 });
