@@ -84,8 +84,6 @@ function shiftGroup(NGP, preGroupList,  divide, Remain){
     if(Remain>0){
         shiftGroup(NGP, nextGroupList, divide,Remain-1);
     } else {
-        console.log(personalGroupList);
-
         downloadTextFile(formatList(personalGroupList));
         refreshCash();
         setTimeout(function (){location.reload();},500);
@@ -140,7 +138,12 @@ function assignGroup(total,divide,count){
                 Number++;
             }
         });
-        shiftGroup(NGP, GroupList, divide, count-1);
+        if(count>=2){
+            shiftGroup(NGP, GroupList, divide, count-1);
+        }else{
+            downloadTextFile(formatList(personalGroupList));
+        }
+
     }
 }
 
@@ -180,12 +183,10 @@ function refreshCash(){
         $('#sum').val(sessionStorage.getItem('sum'));
         $('#divide').val(sessionStorage.getItem('divide'));
         $('#count').val(sessionStorage.getItem('count'));
-        sessionStorage.clear();
     }else{
         $('#sum').val('');
         $('#divide').val('');
         $('#count').val('');
-        sessionStorage.clear();
     }
 }
 $(document).ready(function (){
