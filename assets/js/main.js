@@ -87,7 +87,8 @@ function shiftGroup(NGP, preGroupList,  divide, Remain){
         console.log(personalGroupList);
 
         downloadTextFile(formatList(personalGroupList));
-        deleteCash();
+        refreshCash();
+        setTimeout(function (){location.reload();},500);
     }
 }
 
@@ -176,7 +177,7 @@ function refreshForm(){
     }
 }
 
-function deleteCash(){
+function refreshCash(){
     $('#sum').val('');
     $('#divide').val('');
     $('#count').val('');
@@ -189,5 +190,5 @@ function deleteCash(){
 }
 
 $(function(){
-    deleteCash();
+    refreshCash();
 });
