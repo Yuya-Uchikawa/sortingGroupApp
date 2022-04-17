@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ja">
+<head prefix="og:http://ogp.me/ns#">
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>グループ振り分けリスト Generator</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" href="assets/img/favicon.ico">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+<!--    meta -->
+    <meta property="og:title" content="グループ振り分けリスト Generator">
+    <meta property="og:description" content="内定者懇親会用グループ振り分けに作成した非通信アプリです。">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="assets/img/thumbnail.jpeg">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="">
+</head>
+<body>
+<div class="container">
+    <div class="main container-fluid">
+        <div class="row bg-light text-dark py-5">
+            <div class="col-md-8 offset-md-2">
+                <h2 class="fs-1 mb-5 text-center fw-bold">グループ振り分けリスト Generator</h2>
+
+                <div class="mb-3">
+                    <label>参加人数　<span class="text-danger">*必須</span></label>
+                    <input id="sum" type="number" class="form-control" name="参加人数" placeholder="" value="">
+                </div>
+                <div class="mb-3">
+                    <label>グループ分割数　<span class="text-danger">*必須</span></label>
+                    <input id="divide" type="number" class="form-control" name="グループ分割数" placeholder="" value="">
+                </div>
+                <div class="mb-3">
+                    <label>グループ振り分け回数　<span class="text-danger">*必須</span></label>
+                    <input id="count" type="number" class="form-control" name="グループ振り分け回数" placeholder="" value="">
+                </div>
+<!--                <div class="form-check mb-4">-->
+<!--                    <input class="form-check-input" type="checkbox" value="" id="shuffleFlag">-->
+<!--                    <label class="form-check-label" for="shuffleFlag">-->
+<!--                        Shuffle (無作為に選んだように順番をシャッフルします)-->
+<!--                    </label>-->
+<!--                </div>-->
+                <div class="text-center pt-4 col-md-6 offset-md-3">
+                    <div class="row">
+                        <div class="col-6">
+                            <button class="btn btn-secondary" onclick="refreshForm();">クリア</button>
+                        </div>
+                        <div class="col-6">
+                            <button class="btn btn-primary" onclick="validationCheck();">生成</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="assets/js/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+<script type="text/javascript" src="assets/js/main.js"></script>
+</body>
+</html>
