@@ -86,6 +86,16 @@ function downloadTextFile(personalGroupList){
     URL.revokeObjectURL(aTag.href);
 }
 
+function showResult(personalGroupList){
+    let formatList = '';
+    personalGroupList.forEach(function(value,index){
+        formatList += value.No + ': ' + value.GroupList + '<br>';
+    });
+    $('.modal-body').empty();
+    $('.modal-body').append('<div>'+formatList+'</div>');
+    $('#modal1').modal('show');
+}
+
 //2回目以降のグループ割り当て
 //Remain: 未定義グループ割り当ての数
 function shiftGroup(NGP, preGroupList,  divide, Remain){
@@ -114,7 +124,8 @@ function shiftGroup(NGP, preGroupList,  divide, Remain){
     } else {
         downloadTextFile(formatList(personalGroupList));
         refreshCash();
-        setTimeout(function (){location.reload();},500);
+        showResult(personalGroupList);
+        // setTimeout(function (){location.reload();},5000);
     }
 }
 
@@ -142,6 +153,7 @@ function assignGroup(total,divide,count){
         if(count>=2){
             shiftGroup(NGP, GroupList, divide, count-1);
         }else{
+            showResult(personalGroupList);
             downloadTextFile(formatList(personalGroupList));
         }
 
@@ -166,7 +178,7 @@ function validationCheck(){
             assignGroup(parseInt(joined), parseInt(divide), parseInt(count));
         }
     }else{
-        alert('未入力項目があります。');
+        alert('未入力項目 or 負の数値の入力があります。');
     }
 }
 
