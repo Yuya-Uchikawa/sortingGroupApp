@@ -90,7 +90,7 @@ function shiftGroup(NGP, preGroupList,  divide, Remain){
         $('#sum').val('');
         $('#divide').val('');
         $('#count').val('');
-        setTimeout(function (){location.reload();},800);
+        // setTimeout(function (){location.reload();},800);
     }
 }
 
