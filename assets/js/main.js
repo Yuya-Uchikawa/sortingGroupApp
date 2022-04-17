@@ -58,37 +58,6 @@ function getGroupName(index){
     return (index < GroupName.length ? GroupName[index] : '未設定');
 }
 
-//2回目以降のグループ割り当て
-//Remain: 未定義グループ割り当ての数
-function shiftGroup(NGP, preGroupList,  divide, Remain){
-    let nextGroupList = [];
-    let counter = 0;
-    NGP.forEach(function (value) {//index: 各グループの格納人数のindex
-        for (let i = 0; i < value; i++) {
-            nextGroupList.push({No:preGroupList[counter].No,GroupName:getGroupName(counter % divide)});
-            personalGroupList[preGroupList[counter].No-1].GroupList += ', '+getGroupName(counter % divide);
-            counter++;
-        }
-    });
-    //ID昇順にソート
-    nextGroupList.sort(function (a,b){
-        return a.No - b.No;
-    });
-
-    //グループ名昇順にソート
-    nextGroupList.sort(function (a,b){
-        if(a.GroupName < b.GroupName) return -1;
-        else if(a.GroupName > b.GroupName) return 1;
-        return 0;
-    });
-    if(Remain>0){
-        shiftGroup(NGP, nextGroupList, divide,Remain-1);
-    } else {
-        downloadTextFile(formatList(personalGroupList));
-        refreshCash();
-        setTimeout(function (){location.reload();},500);
-    }
-}
 
 function formatList(personalGroupList){
     let formatList = '';
@@ -115,6 +84,38 @@ function downloadTextFile(personalGroupList){
     aTag.download = date + '_forCSV.txt';
     aTag.click();
     URL.revokeObjectURL(aTag.href);
+}
+
+//2回目以降のグループ割り当て
+//Remain: 未定義グループ割り当ての数
+function shiftGroup(NGP, preGroupList,  divide, Remain){
+    let nextGroupList = [];
+    let counter = 0;
+    NGP.forEach(function (value) {//index: 各グループの格納人数のindex
+        for (let i = 0; i < value; i++) {
+            nextGroupList.push({No:preGroupList[counter].No,GroupName:getGroupName(counter % divide)});
+            personalGroupList[preGroupList[counter].No-1].GroupList += ', '+getGroupName(counter % divide);
+            counter++;
+        }
+    });
+    //ID昇順にソート
+    nextGroupList.sort(function (a,b){
+        return a.No - b.No;
+    });
+
+    //グループ名昇順にソート
+    nextGroupList.sort(function (a,b){
+        if(a.GroupName < b.GroupName) return -1;
+        else if(a.GroupName > b.GroupName) return 1;
+        return 0;
+    });
+    if(Remain>1){
+        shiftGroup(NGP, nextGroupList, divide,Remain-1);
+    } else {
+        downloadTextFile(formatList(personalGroupList));
+        refreshCash();
+        setTimeout(function (){location.reload();},500);
+    }
 }
 
 //グループ振り分けアルゴリズム: グループのN分割を再帰的に繰り返す
