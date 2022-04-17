@@ -140,9 +140,7 @@ function assignGroup(total,divide,count){
                 Number++;
             }
         });
-        if(count>2){
-            shiftGroup(NGP, GroupList, divide, count-1);
-        }
+        shiftGroup(NGP, GroupList, divide, count-1);
     }
 }
 
