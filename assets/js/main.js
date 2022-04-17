@@ -178,14 +178,15 @@ function refreshForm(){
 }
 
 function refreshCash(){
-    $('#sum').val('');
-    $('#divide').val('');
-    $('#count').val('');
-
     if(sessionStorage.getItem('sessionFlag')==='true'){
         $('#sum').val(sessionStorage.getItem('sum'));
         $('#divide').val(sessionStorage.getItem('divide'));
         $('#count').val(sessionStorage.getItem('count'));
+    }else{
+        $('#sum').val('');
+        $('#divide').val('');
+        $('#count').val('');
+        sessionStorage.clear();
     }
 }
 
