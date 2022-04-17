@@ -180,6 +180,10 @@ function refreshForm(){
 }
 
 $(function(){
+    $('#sum').val('');
+    $('#divide').val('');
+    $('#count').val('');
+
     if(sessionStorage.getItem('sessionFlag')==='true'){
         $('#sum').val(sessionStorage.getItem('sum'));
         $('#divide').val(sessionStorage.getItem('divide'));
