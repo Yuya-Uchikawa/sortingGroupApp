@@ -182,6 +182,7 @@ function refreshCash(){
         $('#sum').val(sessionStorage.getItem('sum'));
         $('#divide').val(sessionStorage.getItem('divide'));
         $('#count').val(sessionStorage.getItem('count'));
+        sessionStorage.clear();
     }else{
         $('#sum').val('');
         $('#divide').val('');
@@ -189,7 +190,6 @@ function refreshCash(){
         sessionStorage.clear();
     }
 }
-
-$(function(){
+$(document).ready(function (){
     refreshCash();
 });
