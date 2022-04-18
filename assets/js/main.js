@@ -103,8 +103,8 @@ function shiftGroup(NGP, preGroupList,  divide, Remain){
     let counter = 0;
     NGP.forEach(function (value) {//index: 各グループの格納人数のindex
         for (let i = 0; i < value; i++) {
-            nextGroupList.push({No:preGroupList[counter].No,GroupName:getGroupName(counter % divide)});
-            personalGroupList[preGroupList[counter].No-1].GroupList += ', '+getGroupName(counter % divide);
+            nextGroupList.push({No:preGroupList[counter].No,GroupName:getGroupName((counter+1) % divide)});
+            personalGroupList[preGroupList[counter].No-1].GroupList += ', '+getGroupName((counter+1) % divide);
             counter++;
         }
     });
