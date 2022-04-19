@@ -45,14 +45,11 @@ function getNumberGroupPeople(total,divide){
 }
 
 //グループの振り分けにランダム性を持たせる関数
-//weight: 重み
-// function shuffleGroupSort(weight){
-//     for (let i = weight.length - 2; i >= 0; i--) {
-//         const j = Math.floor(Math.random() * (i + 1));
-//         [weight[i], weight[j]] = [weight[j], weight[i]];
-//     }
-//     return weight;
-// }
+function shiftArray(array){//配列の先頭の要素を末尾にシフトする関数
+    array[array.length]  = array[0];
+    array.shift();
+    return array;
+}
 
 //グループ名取得
 function getGroupName(index){
@@ -101,16 +98,28 @@ function showResult(personalGroupList){
 //Remain: 未定義グループ割り当ての数
 function shiftGroup(NGP, preGroupList,  divide, Remain){
     let nextGroupList = [];
+    let tmpGroupList = [];
+    let tmpGroupNameList = [];
     let counter = 0;
+    //グループ毎にループ
     NGP.forEach(function (value,index) {//index: 各グループの格納人数のindex
-        let weight = Math.floor(Math.random() * (index + 1));
-        console.log(weight);
+        tmpGroupList = [];//グループのリスト
+        tmpGroupNameList = [];//次のグループ名リスト
+        //グループのリストを一時保存
         for (let i = 0; i < value; i++) {
-            nextGroupList.push({No:preGroupList[counter].No,GroupName:getGroupName((counter+index+weight) % divide)});
-            personalGroupList[preGroupList[counter].No-1].GroupList += ', '+getGroupName((counter+index+weight) % divide);
+            tmpGroupList.push(preGroupList[counter]);
+            tmpGroupNameList.push(getGroupName(counter%divide));
             counter++;
-            console.log(index);
         }
+        //重複少なく振り分けをするために配列のシフト
+        for(let i = 0; i < index + Remain; i++){
+            tmpGroupList = shiftArray(tmpGroupList);
+        }
+        //次の移動先を格納
+        tmpGroupList.forEach(function (value,index){
+            nextGroupList.push({No:value.No, GroupName:tmpGroupNameList[index]});
+            personalGroupList[value.No-1].GroupList += ', '+tmpGroupNameList[index];
+        });
     });
     //ID昇順にソート
     nextGroupList.sort(function (a,b){
@@ -129,7 +138,6 @@ function shiftGroup(NGP, preGroupList,  divide, Remain){
         downloadTextFile(formatList(personalGroupList));
         refreshCash();
         showResult(personalGroupList);
-        // setTimeout(function (){location.reload();},5000);
     }
 }
 
@@ -138,8 +146,6 @@ function shiftGroup(NGP, preGroupList,  divide, Remain){
 function assignGroup(total,divide,count){
     initializeList();
     if(total < divide){
-        console.log('参加人数:　' + total);
-        console.log('分割数: '　+ divide);
         alert("グループ分割数が参加人数を超えています。");
     }else{
         const NGP = getNumberGroupPeople(total,divide);//各グループの格納人数
