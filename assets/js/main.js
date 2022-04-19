@@ -124,12 +124,8 @@ function shiftGroup(NGP, preGroupList,  divide, Remain){
     NGP.forEach(function (value) {//index: 各グループの格納人数のindex
         shuffleWeight();
         for (let i = 0; i < value; i++) {
-            let index = counter + weight[i];
-            if(index<0){
-                index += divide;
-            }
-            nextGroupList.push({No:preGroupList[counter].No,GroupName:getGroupName((index) % divide)});
-            personalGroupList[preGroupList[counter].No-1].GroupList += ', '+getGroupName((index) % divide);
+            nextGroupList.push({No:preGroupList[counter].No,GroupName:getGroupName((counter+value) % divide)});
+            personalGroupList[preGroupList[counter].No-1].GroupList += ', '+getGroupName((counter+value) % divide);
             counter++;
         }
     });
