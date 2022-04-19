@@ -28,6 +28,8 @@ const GroupName = [
 ];
 
 var personalGroupList = [];
+var debateCount = 0;
+var randomGroupNameList = [];//議論回数が多い時用のグループ名リスト
 
 //各グループの格納人数を定義
 function getNumberGroupPeople(total,divide){
@@ -43,12 +45,21 @@ function getNumberGroupPeople(total,divide){
 
     return numberGroupPeople;
 }
-
-//グループの振り分けにランダム性を持たせる関数
-function shiftArray(array){//配列の先頭の要素を末尾にシフトする関数
+//配列の先頭の要素を末尾にシフトする関数
+function shiftArray(array){
     array[array.length]  = array[0];
     array.shift();
     return array;
+}
+
+//グループの振り分けにランダム性を持たせる関数
+//arrayGroupSort: 各参加者のグループ割り当てが格納された配列の引数を格納する配列
+function shuffleGroupSort(arrayGroupSort){
+    for (let i = arrayGroupSort.length - 1; i >= 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arrayGroupSort[i], arrayGroupSort[j]] = [arrayGroupSort[j], arrayGroupSort[i]];
+    }
+    return arrayGroupSort;
 }
 
 //グループ名取得
@@ -96,31 +107,42 @@ function showResult(personalGroupList){
 
 //2回目以降のグループ割り当て
 //Remain: 未定義グループ割り当ての数
-function shiftGroup(NGP, preGroupList,  divide, Remain){
+function shiftGroup(NGP, preGroupList,  divide, count, Remain){
     let nextGroupList = [];
     let tmpGroupList = [];
     let tmpGroupNameList = [];
     let counter = 0;
-    //グループ毎にループ
-    NGP.forEach(function (value,index) {//index: 各グループの格納人数のindex
-        tmpGroupList = [];//グループのリスト
-        tmpGroupNameList = [];//次のグループ名リスト
-        //グループのリストを一時保存
-        for (let i = 0; i < value; i++) {
-            tmpGroupList.push(preGroupList[counter]);
-            tmpGroupNameList.push(getGroupName(counter%divide));
-            counter++;
-        }
-        //重複少なく振り分けをするために配列のシフト
-        for(let i = 0; i < index + Remain; i++){
-            tmpGroupList = shiftArray(tmpGroupList);
-        }
-        //次の移動先を格納
-        tmpGroupList.forEach(function (value,index){
-            nextGroupList.push({No:value.No, GroupName:tmpGroupNameList[index]});
-            personalGroupList[value.No-1].GroupList += ', '+tmpGroupNameList[index];
+
+    if((count - Remain) < divide){//試行回数　>　分割数　の時
+        //グループ毎にループ
+        NGP.forEach(function (value,index) {//index: 各グループの格納人数のindex
+            tmpGroupList = [];//グループのリスト
+            tmpGroupNameList = [];//次のグループ名リスト
+            //グループのリストを一時保存
+            for (let i = 0; i < value; i++) {
+                tmpGroupList.push(preGroupList[counter]);
+                tmpGroupNameList.push(getGroupName(counter%divide));
+                counter++;
+            }
+            //重複少なく振り分けをするために配列のシフト
+            for(let i = 0; i < index + Remain; i++){
+                tmpGroupList = shiftArray(tmpGroupList);
+            }
+            //次の移動先を格納
+            tmpGroupList.forEach(function (value,index){
+                nextGroupList.push({No:value.No, GroupName:tmpGroupNameList[index]});
+                personalGroupList[value.No-1].GroupList += ', '+tmpGroupNameList[index];
+            });
         });
-    });
+    } else {//試行回数　<　分割数　の時
+        randomGroupNameList = shuffleGroupSort(randomGroupNameList);
+        for(let i = 0; i < preGroupList.length; i++){
+            nextGroupList.push({No: i+1, GroupName:randomGroupNameList[i]});
+            personalGroupList[i].GroupList += ', '+randomGroupNameList[i];
+        }
+    }
+
+
     //ID昇順にソート
     nextGroupList.sort(function (a,b){
         return a.No - b.No;
@@ -133,7 +155,7 @@ function shiftGroup(NGP, preGroupList,  divide, Remain){
         return 0;
     });
     if(Remain>1){
-        shiftGroup(NGP, nextGroupList, divide,Remain-1);
+        shiftGroup(NGP, nextGroupList, divide,count,Remain-1);
     } else {
         downloadTextFile(formatList(personalGroupList));
         refreshCash();
@@ -145,13 +167,13 @@ function shiftGroup(NGP, preGroupList,  divide, Remain){
 //total: 参加者の合計人数 , divide: グループを何分割するか , count: 議論の回数
 function assignGroup(total,divide,count){
     initializeList();
+    debateCount = count;
     if(total < divide){
         alert("グループ分割数が参加人数を超えています。");
     }else{
         const NGP = getNumberGroupPeople(total,divide);//各グループの格納人数
 
-        let GroupList = [];//各回のグループ割り当て
-
+        let GroupList = [];//１回目のグループ割り当て
         let Number = 1;
         NGP.forEach(function (value, index) {//index: 各グループの格納人数のindex
             for (let i = 0; i < value; i++) {
@@ -160,8 +182,15 @@ function assignGroup(total,divide,count){
                 Number++;
             }
         });
+        if(count>divide){
+            for (let i = 0; i < total; i++){
+                randomGroupNameList.push(getGroupName(i % divide));
+            }
+        }else {
+            randomGroupNameList = [];
+        }
         if(count>=2){
-            shiftGroup(NGP, GroupList, divide, count-1);
+            shiftGroup(NGP, GroupList, divide, count, count-1);
         }else{
             showResult(personalGroupList);
             downloadTextFile(formatList(personalGroupList));
@@ -194,6 +223,8 @@ function validationCheck(){
 
 function initializeList(){
     personalGroupList = [];
+    debateCount = 0;
+    randomGroupNameList = [];
 }
 
 function refreshForm(){
