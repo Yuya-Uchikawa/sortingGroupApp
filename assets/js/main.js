@@ -28,6 +28,7 @@ const GroupName = [
 ];
 
 var personalGroupList = [];
+var weight = [];
 
 //各グループの格納人数を定義
 function getNumberGroupPeople(total,divide){
@@ -40,18 +41,37 @@ function getNumberGroupPeople(total,divide){
             numberGroupPeople[i]++;
         }
     }
+
+    defineWight(numberGroupPeople[0]);
+
     return numberGroupPeople;
 }
 
+function defineWight(nGroup){
+    var slider = nGroup - 2;//スライドする人数
+    weight.length = nGroup;
+    weight.fill(0);
+    if(slider>0){
+        for(let i = 0; i < slider; i++){
+            weight[i] = (i % 2 ? 1 : -1);
+        }
+    }
+}
+
+function shuffleWeight(){
+    shuffleGroupSort(weight);
+    console.log(weight);
+}
+
 //グループの振り分けにランダム性を持たせる関数
-//arrayGroupSort: 各参加者のグループ割り当てが格納された配列の引数を格納する配列
-// function shuffleGroupSort(arrayGroupSort){
-//     for (let i = arrayGroupSort.length - 1; i >= 0; i--) {
-//         const j = Math.floor(Math.random() * (i + 1));
-//         [arrayGroupSort[i], arrayGroupSort[j]] = [arrayGroupSort[j], arrayGroupSort[i]];
-//     }
-//     return arrayGroupSort;
-// }
+//weight: 重み
+function shuffleGroupSort(weight){
+    for (let i = weight.length - 2; i >= 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [weight[i], weight[j]] = [weight[j], weight[i]];
+    }
+    return weight;
+}
 
 //グループ名取得
 function getGroupName(index){
@@ -102,9 +122,14 @@ function shiftGroup(NGP, preGroupList,  divide, Remain){
     let nextGroupList = [];
     let counter = 0;
     NGP.forEach(function (value) {//index: 各グループの格納人数のindex
+        shuffleWeight();
         for (let i = 0; i < value; i++) {
-            nextGroupList.push({No:preGroupList[counter].No,GroupName:getGroupName((counter+value) % divide)});
-            personalGroupList[preGroupList[counter].No-1].GroupList += ', '+getGroupName((counter+value) % divide);
+            let index = counter + weight[i];
+            if(index<0){
+                index += divide;
+            }
+            nextGroupList.push({No:preGroupList[counter].No,GroupName:getGroupName((index) % divide)});
+            personalGroupList[preGroupList[counter].No-1].GroupList += ', '+getGroupName((index) % divide);
             counter++;
         }
     });
@@ -132,7 +157,7 @@ function shiftGroup(NGP, preGroupList,  divide, Remain){
 //グループ振り分けアルゴリズム: グループのN分割を再帰的に繰り返す
 //total: 参加者の合計人数 , divide: グループを何分割するか , count: 議論の回数
 function assignGroup(total,divide,count){
-    personalGroupList = [];
+    initializeList();
     if(total < divide){
         console.log('参加人数:　' + total);
         console.log('分割数: '　+ divide);
@@ -180,6 +205,11 @@ function validationCheck(){
     }else{
         alert('未入力項目 or 負の数値の入力があります。');
     }
+}
+
+function initializeList(){
+    personalGroupList = [];
+    weight = [];
 }
 
 function refreshForm(){
