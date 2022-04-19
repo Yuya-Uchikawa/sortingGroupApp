@@ -28,7 +28,6 @@ const GroupName = [
 ];
 
 var personalGroupList = [];
-var weight = [];
 
 //各グループの格納人数を定義
 function getNumberGroupPeople(total,divide){
@@ -42,36 +41,18 @@ function getNumberGroupPeople(total,divide){
         }
     }
 
-    defineWight(numberGroupPeople[0]);
-
     return numberGroupPeople;
-}
-
-function defineWight(nGroup){
-    var slider = nGroup - 2;//スライドする人数
-    weight.length = nGroup;
-    weight.fill(0);
-    if(slider>0){
-        for(let i = 0; i < slider; i++){
-            weight[i] = (i % 2 ? 1 : -1);
-        }
-    }
-}
-
-function shuffleWeight(){
-    shuffleGroupSort(weight);
-    console.log(weight);
 }
 
 //グループの振り分けにランダム性を持たせる関数
 //weight: 重み
-function shuffleGroupSort(weight){
-    for (let i = weight.length - 2; i >= 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [weight[i], weight[j]] = [weight[j], weight[i]];
-    }
-    return weight;
-}
+// function shuffleGroupSort(weight){
+//     for (let i = weight.length - 2; i >= 0; i--) {
+//         const j = Math.floor(Math.random() * (i + 1));
+//         [weight[i], weight[j]] = [weight[j], weight[i]];
+//     }
+//     return weight;
+// }
 
 //グループ名取得
 function getGroupName(index){
@@ -121,12 +102,14 @@ function showResult(personalGroupList){
 function shiftGroup(NGP, preGroupList,  divide, Remain){
     let nextGroupList = [];
     let counter = 0;
-    NGP.forEach(function (value) {//index: 各グループの格納人数のindex
-        shuffleWeight();
+    NGP.forEach(function (value,index) {//index: 各グループの格納人数のindex
+        let weight = Math.floor(Math.random() * (index + 1));
+        console.log(weight);
         for (let i = 0; i < value; i++) {
-            nextGroupList.push({No:preGroupList[counter].No,GroupName:getGroupName((counter+value) % divide)});
-            personalGroupList[preGroupList[counter].No-1].GroupList += ', '+getGroupName((counter+value) % divide);
+            nextGroupList.push({No:preGroupList[counter].No,GroupName:getGroupName((counter+index+weight) % divide)});
+            personalGroupList[preGroupList[counter].No-1].GroupList += ', '+getGroupName((counter+index+weight) % divide);
             counter++;
+            console.log(index);
         }
     });
     //ID昇順にソート
@@ -205,7 +188,6 @@ function validationCheck(){
 
 function initializeList(){
     personalGroupList = [];
-    weight = [];
 }
 
 function refreshForm(){
