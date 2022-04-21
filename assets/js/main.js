@@ -30,6 +30,7 @@ const GroupName = [
 var personalGroupList = [];
 var debateCount = 0;
 var randomGroupNameList = [];//議論回数が多い時用のグループ名リスト
+var leaderCount = 0;//リーダー数
 
 //各グループの格納人数を定義
 function getNumberGroupPeople(total,divide){
@@ -67,11 +68,22 @@ function getGroupName(index){
     return (index < GroupName.length ? GroupName[index] : '未設定');
 }
 
+function getLeadreGroupName(index,debateCount){
+    let leaderGroupList = getGroupName(index);
+    if(debateCount>1){
+        for(let i = 0;i<debateCount-1;i++){
+            leaderGroupList += ', '+getGroupName(index);
+        }
+    }
+
+    return leaderGroupList;
+}
+
 
 function formatList(personalGroupList){
     let formatList = '';
     personalGroupList.forEach(function(value,index){
-        formatList += value.No + ', ' + ' , ' + value.GroupList + '\n';
+        formatList += value.No  + ', '+ ( index < leaderCount ?'【リーダー】':'') + ' , ' + value.GroupList + '\n';
     });
     return formatList;
 }
@@ -98,7 +110,7 @@ function downloadTextFile(personalGroupList){
 function showResult(personalGroupList){
     let formatList = '';
     personalGroupList.forEach(function(value,index){
-        formatList += value.No + ': ' + value.GroupList + '<br>';
+        formatList += value.No + ( index < leaderCount ?'(リーダー)':'') + ': ' + value.GroupList + '<br>';
     });
     $('.modal-body').empty();
     $('.modal-body').append('<div>'+formatList+'</div>');
@@ -137,8 +149,8 @@ function shiftGroup(NGP, preGroupList,  divide, count, Remain){
     } else {//試行回数　<　分割数　の時
         randomGroupNameList = shuffleGroupSort(randomGroupNameList);
         for(let i = 0; i < preGroupList.length; i++){
-            nextGroupList.push({No: i+1, GroupName:randomGroupNameList[i]});
-            personalGroupList[i].GroupList += ', '+randomGroupNameList[i];
+            nextGroupList.push({No: i+1+leaderCount, GroupName:randomGroupNameList[i]});
+            personalGroupList[i+leaderCount].GroupList += ', '+randomGroupNameList[i];
         }
     }
 
@@ -166,7 +178,6 @@ function shiftGroup(NGP, preGroupList,  divide, count, Remain){
 //グループ振り分けアルゴリズム: グループのN分割を再帰的に繰り返す
 //total: 参加者の合計人数 , divide: グループを何分割するか , count: 議論の回数
 function assignGroup(total,divide,count){
-    initializeList();
     debateCount = count;
     if(total < divide){
         alert("グループ分割数が参加人数を超えています。");
@@ -177,16 +188,16 @@ function assignGroup(total,divide,count){
         let Number = 1;
         NGP.forEach(function (value, index) {//index: 各グループの格納人数のindex
             for (let i = 0; i < value; i++) {
-                GroupList.push({No: Number, GroupName: getGroupName(index)});
-                personalGroupList.push({No: Number, GroupList:getGroupName(index)});
+                GroupList.push({No: Number + leaderCount, GroupName: getGroupName(index)});
+                personalGroupList.push({No: Number + leaderCount, GroupList:getGroupName(index)});
                 Number++;
             }
         });
-        if(count>divide){
+        if(count>divide){//議論回数が多い場合
             for (let i = 0; i < total; i++){
                 randomGroupNameList.push(getGroupName(i % divide));
             }
-        }else {
+        }else {//議論回数が少ない場合
             randomGroupNameList = [];
         }
         if(count>=2){
@@ -209,12 +220,21 @@ function validationCheck(){
         (count > 0)
     ){
         if(confirm('グループ振り分けのリストを生成しますか？\n（ダウンロードしたテキストファイルは、エクセルのデータタブからインポートすることで活用することが出来ます。）')){
+            initializeList();
             sessionStorage.clear();
             sessionStorage.setItem('sessionFlag','true');
             sessionStorage.setItem('sum',joined);
             sessionStorage.setItem('divide',divide);
             sessionStorage.setItem('count',count);
-            assignGroup(parseInt(joined), parseInt(divide), parseInt(count));
+            if($('#modeFlag').prop('checked')){//リーダーを設定する場合
+                leaderCount = parseInt(divide);
+                for(let i = 0; i< divide;i++){
+                    personalGroupList.push({No: i + 1, GroupList:getLeadreGroupName(i,count)});
+                }
+                assignGroup(parseInt(joined) - leaderCount, parseInt(divide), parseInt(count))
+            } else {//リーダーを設定しない場合
+                assignGroup(parseInt(joined), parseInt(divide), parseInt(count));
+            }
         }
     }else{
         alert('未入力項目 or 負の数値の入力があります。');
@@ -225,6 +245,7 @@ function initializeList(){
     personalGroupList = [];
     debateCount = 0;
     randomGroupNameList = [];
+    leaderCount = 0;
 }
 
 function refreshForm(){
@@ -247,6 +268,20 @@ function refreshCash(){
         $('#count').val('');
     }
 }
+
+function fixCheck(){
+    if($('#sum').val() < $('#divide').val()*2){
+        $('#modeFlag').prop('checked',false).prop('disabled',true);
+    }else{
+        $('#modeFlag').prop('disabled',false);
+    }
+}
+
 $(document).ready(function (){
     refreshCash();
+    fixCheck();
+
+    $('#sum , #divide').change(function() {
+        fixCheck();
+    });
 });
