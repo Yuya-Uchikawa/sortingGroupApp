@@ -102,7 +102,7 @@ function downloadTextFile(personalGroupList){
     const aTag = document.createElement('a');
     aTag.href = URL.createObjectURL(blob);
     aTag.target = '_blank';
-    aTag.download = date + '_GroupShuffle.csv';
+    aTag.download = 'GroupShuffle_' + date + '.csv';
     aTag.click();
     URL.revokeObjectURL(aTag.href);
 }
