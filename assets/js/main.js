@@ -83,7 +83,7 @@ function getLeadreGroupName(index,debateCount){
 function formatList(personalGroupList){
     let formatList = '';
     personalGroupList.forEach(function(value,index){
-        formatList += value.No  + ', '+ ( index < leaderCount ?'【リーダー】':'') + ' , ' + value.GroupList + '\n';
+        formatList += value.No  + ', '+ ( index < leaderCount ?'Leader: ':'') + ' , ' + value.GroupList + '\n';
     });
     return formatList;
 }
@@ -102,7 +102,7 @@ function downloadTextFile(personalGroupList){
     const aTag = document.createElement('a');
     aTag.href = URL.createObjectURL(blob);
     aTag.target = '_blank';
-    aTag.download = date + '_forCSV.txt';
+    aTag.download = date + '_GroupShuffle.csv';
     aTag.click();
     URL.revokeObjectURL(aTag.href);
 }
